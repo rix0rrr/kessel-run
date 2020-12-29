@@ -1,0 +1,82 @@
+body {
+  background: #ddd;
+}
+
+header {
+  background: rgb(44,47,75);
+  background: linear-gradient(90deg, rgba(44,47,75,1) 0%, rgba(79,82,105,1) 100%);
+  color: white;
+}
+
+.layout {
+  max-width: 50em;
+  margin: 0 auto;
+  background: white;
+}
+
+table {
+  margin: 1.5em 0em;
+}
+
+th {
+  text-align: left;
+}
+
+td {
+  height: 3em;
+}
+
+.pure-g > div {
+  box-sizing: border-box;
+}
+.l-box {
+  padding: 1em;
+}
+
+pre {
+  background: #eee;
+  padding: 1em;
+}
+
+#oops {
+  color: red;
+}
+
+.popover {
+  font-size: 10pt;
+  padding: 6px 10px;
+  border: solid 1px #A49B35;
+  background: #FFF9B7;
+}
+
+.button-small {
+  font-size: 85%;
+}
+
+.copy-link {
+  text-decoration: none;
+  float: right;
+}
+
+.monogram {
+  font-size: 80pt;
+  text-align: center;
+  padding-top: 10px;
+  font-weight: 900;
+  overflow: hidden;
+  background: rgb(0,252,147);
+  background: linear-gradient(90deg, rgba(0,252,147,1) 0%, rgba(0,166,250,1) 100%);
+  background-size: 100%;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-text-fill-color: transparent;
+}
+
+h1 {
+  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: 30pt;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
