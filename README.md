@@ -37,6 +37,7 @@ Finally, run:
 
 ```
 $ npm install
+$ npx cdk bootstrap   # this only needs to be done once
 $ npm run build && npx cdk deploy
 ```
 
