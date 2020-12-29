@@ -7,14 +7,14 @@ import * as s3 from '@aws-cdk/aws-s3';
 import * as s3depl from '@aws-cdk/aws-s3-deployment';
 import { BlockDeviceVolume, Vpc } from '@aws-cdk/aws-ec2';
 import { S3Gateway } from './s3gateway';
+import { EC2KeyPair } from './ec2keypair';
 
-export class GameboxStack extends cdk.Stack {
+export class KesselRunStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     // Be prepared to pay $0.10/GiB-month even as the instance is not running.
     const diskSize = cdk.Size.gibibytes(50);
-    const yourIp = '1.2.3.4';
 
     const vpc = Vpc.fromLookup(this, 'Vpc', { isDefault: true });
 
@@ -31,31 +31,16 @@ export class GameboxStack extends cdk.Stack {
       userName: nvidiaUser.userName,
     });
 
-    const serviceToken = cdk.CustomResourceProvider.getOrCreate(this, 'Custom::MyCustomResourceType', {
-      codeDirectory: `${__dirname}/custom-resource`,
-      runtime: cdk.CustomResourceProviderRuntime.NODEJS_12,
-      policyStatements: [
-        {
-          Effect: 'Allow',
-          Action: ['ec2:CreateKeyPair', 'ec2:DeleteKeyPair', 'ssm:PutParameter'],
-          Resource: ['*'],
-        }
-      ],
+    // Need this accessible to decrypt the password
+    const instanceKey = new EC2KeyPair(this, 'GameKey', {
+      keyNameBase: 'KesselRunKey',
     });
-    const instanceKey = new cdk.CustomResource(this, 'KeyPair', {
-      resourceType: 'Custom::KeyPair',
-      serviceToken: serviceToken,
-      properties: {
-        KeyNameBase: 'GameKey',
-      },
-    });
-    const instanceKeyParameterName = instanceKey.getAttString('Parameter');
 
     const instance = new ec2.Instance(this, 'Instance', {
       instanceType: new ec2.InstanceType('g4dn.xlarge'),
       machineImage: new ec2.WindowsImage(ec2.WindowsVersion.WINDOWS_SERVER_2019_ENGLISH_FULL_BASE),
       vpc,
-      keyName: instanceKey.getAttString('KeyName'),
+      keyName: instanceKey.keyName,
       blockDevices: [
         {
           deviceName: '/dev/sda1',
@@ -75,18 +60,17 @@ export class GameboxStack extends cdk.Stack {
     instance.addUserData(
       `Set-AWSCredential -AccessKey ${userKey.ref} -SecretKey ${userKey.attrSecretAccessKey} -StoreAs GPUUpdateG4Dn`
     );
-
-    // Need to edit IP address, should provide a Lambda for this
-    instance.connections.allowFrom(ec2.Peer.ipv4(`${yourIp}/32`), ec2.Port.allTraffic(), 'CLIENT');
+    instance.connections.allowFrom(ec2.Peer.ipv4(`1.2.3.4/32`), ec2.Port.allTraffic(), 'Dummy');
 
     const securityGroup = instance.connections.securityGroups[0]!;
 
-    // ----------------------------------------------
-    const bucket = new s3.Bucket(this, 'Bucket', {
+    // ---------------------------------------------------
+
+    const bucket = new s3.Bucket(this, 'WebAppBucket', {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
-    new s3depl.BucketDeployment(this, 'Deployment', {
+    new s3depl.BucketDeployment(this, 'WebAppDeployment', {
       destinationBucket: bucket,
       sources: [
         s3depl.Source.asset(`${__dirname}/webapp-static`),
@@ -102,7 +86,7 @@ export class GameboxStack extends cdk.Stack {
       environment: {
         INSTANCE_ID: instance.instanceId,
         SECURITY_GROUP_ID: securityGroup.securityGroupId,
-        KEY_PARAMETER_NAME: instanceKeyParameterName,
+        KEY_PARAMETER_NAME: instanceKey.parameterName,
       },
     });
 
@@ -143,7 +127,7 @@ export class GameboxStack extends cdk.Stack {
         this.formatArn({
           service: 'ssm',
           resource: 'parameter',
-          resourceName: instanceKeyParameterName,
+          resourceName: instanceKey.parameterName,
           sep: '', // Because the '/' is already in the name of the parameter
         })
       ],

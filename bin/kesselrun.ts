@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
-import { GameboxStack } from '../lib/gamebox-stack';
+import { KesselRunStack } from '../lib/kesselrun-stack';
 
 const app = new cdk.App();
-new GameboxStack(app, 'GameboxStack', {
+new KesselRunStack(app, 'KesselRunStack', {
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,
     region: process.env.CDK_DEFAULT_REGION,

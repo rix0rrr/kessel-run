@@ -23,7 +23,7 @@ export async function handler(event: CloudFormationCustomResourceEvent) {
     }).promise();
 
     return {
-      PhysicalResourceId: response.KeyPairId,
+      PhysicalResourceId: `${keyName}|${parameterName}`,
       Data: {
         KeyName: keyName,
         Parameter: parameterName,
@@ -32,8 +32,13 @@ export async function handler(event: CloudFormationCustomResourceEvent) {
   }
 
   if (event.RequestType === 'Delete') {
+    const [keyName, parameterName] = event.PhysicalResourceId.split('|');
     await ec2.deleteKeyPair({
-      KeyPairId: event.PhysicalResourceId,
+      KeyName: keyName,
+    }).promise();
+
+    await ssm.deleteParameter({
+      Name: parameterName,
     }).promise();
 
     return {};

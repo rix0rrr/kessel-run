@@ -8,3 +8,5 @@ node_modules
 cdk.out
 !lib/webapp-static/*
 .DS_Store
+
+cdk.context.json

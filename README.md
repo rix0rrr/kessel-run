@@ -44,6 +44,14 @@ $ npm run build && npx cdk deploy
 The command will run for a while, and finally spit out a URL. Visit that URL in your browser to
 get the IP address, admin password for initial RDP setup, and start/stop the instance.
 
+To get rid of everything created by this application, go:
+
+```
+$ npx cdk destroy
+```
+
+Or log in to the CloudFormation console and delete the **KesselRunStack** stack.
+
 # Future improvements
 
 - Authentication to the management page. Right now, keep the URL secret as anyone who has it
