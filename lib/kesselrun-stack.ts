@@ -1,3 +1,4 @@
+import * as path from 'path';
 import * as cdk from '@aws-cdk/core';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as iam from '@aws-cdk/aws-iam';
@@ -50,16 +51,29 @@ export class KesselRunStack extends cdk.Stack {
           }),
         }
       ],
-      userDataCausesReplacement: true,
+      init: ec2.CloudFormationInit.fromElements(
+        ec2.InitCommand.argvCommand([
+          'PowerShell',
+          '-Command',
+          // Literal keys here is not great, but at least the permissions are very limited...
+          `Set-AWSCredential -AccessKey ${userKey.ref} -SecretKey ${userKey.attrSecretAccessKey} -StoreAs GPUUpdateG4Dn`
+        ]),
+        ec2.InitFile.fromFileInline(
+          'C:\\Users\\Administrator\\Downloads\\first-run-setup.ps1',
+          path.join(__dirname, 'instance-files', 'first-run-setup.ps1'),
+        ),
+        ec2.InitFile.fromFileInline(
+          'C:\\Users\\Administrator\\Desktop\\FIRST RUN SETUP.bat',
+          path.join(__dirname, 'instance-files', 'first-run-setup.bat'),
+        ),
+      ),
     });
-    // SSM
-    instance.role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'));
     (instance.node.defaultChild as ec2.CfnInstance).ebsOptimized = true;
 
-    // Keys in UserData is not great, but at least the permissions are very limited...
-    instance.addUserData(
-      `Set-AWSCredential -AccessKey ${userKey.ref} -SecretKey ${userKey.attrSecretAccessKey} -StoreAs GPUUpdateG4Dn`
-    );
+    // SSM (don't need this if we have CfnInit, leaving it
+    // here since this might come in useful later)
+    // instance.role.addManagedPolicy(iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'));
+
     instance.connections.allowFrom(ec2.Peer.ipv4(`1.2.3.4/32`), ec2.Port.allTraffic(), 'Dummy');
 
     const securityGroup = instance.connections.securityGroups[0]!;

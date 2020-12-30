@@ -1,0 +1,1 @@
+@PowerShell -File %UserProfile%\Downloads\first-run-setup.ps1

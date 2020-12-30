@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="pure-min.css">
     <link rel="stylesheet" href="custom.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
   </head>
   <body>
     <script>
@@ -76,14 +78,9 @@
 
         <ul>
           <li>Mark the device as running on a <strong>Public</strong> network.</li>
-          <li>Run the following in the PowerShell ISE (takes ~15 minutes and requires you to type <tt>Y</tt> a couple of times):
-            <pre>[Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
-    $ScriptWebArchive = "https://github.com/parsec-cloud/Parsec-Cloud-Preparation-Tool/archive/master.zip"
-    $LocalArchivePath = "$ENV:UserProfile\Downloads\Parsec-Cloud-Preparation-Tool"
-    (New-Object System.Net.WebClient).DownloadFile($ScriptWebArchive, "$LocalArchivePath.zip")
-    Expand-Archive "$LocalArchivePath.zip" -DestinationPath $LocalArchivePath -Force
-    CD $LocalArchivePath\Parsec-Cloud-Preparation-Tool-master\ | powershell.exe .\loader.ps1</pre>
-            (Using the <a target="_blank" href="https://github.com/parsec-cloud/Parsec-Cloud-Preparation-Tool">Parsec Cloud Preparation Tool</a>)
+          <li>
+            Run the <tt>FIRST RUN SETUP.bat</tt> script that's on the desktop  (takes ~15 minutes and requires you to type <tt>Y</tt> a couple of times.
+            Uses the <a target="_blank" href="https://github.com/parsec-cloud/Parsec-Cloud-Preparation-Tool">Parsec Cloud Preparation Tool</a>).
           </li>
           <li>Log into Parsec with your email address and password (you will need to verify the login from your mailbox)</li>
           <li>Finally reboot the machine and use Parsec to connect to it</li>
