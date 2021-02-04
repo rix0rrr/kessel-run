@@ -1,9 +1,14 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Monoton&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Monoton&display=swap');
 
+
+/* This file gets mangled by API Gateway */
+/*
 @font-face {
   font-family: Monoton;
+
   src: url('Monoton-Regular.ttf') format('truetype');
 }
+*/
 
 body {
   background: #ddd;
