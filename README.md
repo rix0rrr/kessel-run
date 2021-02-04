@@ -19,15 +19,13 @@ You need the following:
 * A [Parsec](https://parsec.app) account (and Parsec installed)
 * A Microsoft Remote Desktop Client installed
 
-Configure AWS credentials and configure your default region, either using:
+Configure AWS credentials and configure your default region:
 
 ```
+# EITHER
 $ aws configure
-```
 
-or
-
-```
+# OR
 $ export AWS_ACCESS_KEY_ID=...
 $ export AWS_SECRET_ACCESS_KEY=...
 $ export AWS_REGION=...
@@ -36,18 +34,16 @@ $ export AWS_REGION=...
 Finally, run:
 
 ```
-$ npm install
-$ npx cdk bootstrap   # this only needs to be done once
-$ npm run build && npx cdk deploy
+$ npx instacdk deploy rix0rrr/kessel-run
 ```
 
 The command will run for a while, and finally spit out a URL. Visit that URL in your browser to
 get the IP address, admin password for initial RDP setup, and start/stop the instance.
 
-To get rid of everything created by this application, go:
+To get rid of everything created by this application, run:
 
 ```
-$ npx cdk destroy
+$ npx instacdk manage
 ```
 
 Or log in to the CloudFormation console and delete the **KesselRunStack** stack.
